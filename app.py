@@ -78,7 +78,6 @@ player = pygame.Rect(width/2, height/2, player_img.get_width(), player_img.get_h
 
 
 
-
 # Enemy
 enemy_img = pygame.image.load(os.path.join("assets", "enemy.png")).convert_alpha()
 enemies = []
@@ -87,6 +86,34 @@ wavelength = 6
 
 
 pause = False
+
+
+
+
+
+# Fonts
+font = pygame.font.SysFont("ComicSans", 80)
+
+
+
+
+
+
+
+
+# Pause
+pause_render = font.render("Pause", True, (255,255,255))
+pause_rect = pygame.Rect(
+    0 + 10,
+    0 + 10,
+    pause_render.get_width(),
+    pause_render.get_height()
+)
+
+
+
+
+
 
 
 
@@ -99,11 +126,14 @@ while 1:
     # Draw
     display.fill((50,50,50))
     
+    display.blit(pause_render, (pause_rect.x, pause_rect.y))
+
     for planet in planets:
         display.blit(planet[0], (planet[1].x, planet[1].y))
 
         if planet[1].colliderect(blackhole):
             planets.remove([planet[0], planet[1]])
+        
 
     for enemy in enemies:
         display.blit(enemy_img, (enemy.x, enemy.y))
@@ -114,6 +144,11 @@ while 1:
 
         if enemy.colliderect(player):
             enemies.remove(enemy)
+
+        if enemy.y > 0:
+            if enemy.colliderect(blackhole):
+                enemies.remove(enemy)
+
 
     display.blit(player_img, (player.x, player.y))
     
@@ -131,7 +166,7 @@ while 1:
             sys.exit()
 
         if event.type == KEYDOWN:
-            if event.key == K_SPACE:
+            if event.key == K_ESCAPE:
                 pause = True
 
 
@@ -149,6 +184,17 @@ while 1:
             enemies.append(enemy)
 
 
+
+
+
+
+    # Buttons Clicks
+    mouse_pos = pygame.mouse.get_pos()
+    mouse_pressed = list(pygame.mouse.get_pressed())
+        
+    if pause_rect.collidepoint(mouse_pos):
+        if mouse_pressed[0] == True:
+            pause = True 
 
 
 
@@ -216,10 +262,12 @@ while 1:
         pause_display.blit(resume_render, (resume.x, resume.y))
         pause_display.blit(menu_render, (menu_rect.x, menu_rect.y))
 
-        # mouse_pos
+        
+        # mouse pos
         mouse_pos = pygame.mouse.get_pos()
         mouse_pressed = list(pygame.mouse.get_pressed())
-        
+            
+
         if resume.collidepoint(mouse_pos):
 
             if mouse_pressed[0] == True:
