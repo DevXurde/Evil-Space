@@ -15,13 +15,27 @@ from pygame.locals import *
 pygame.init()
 pygame.font.init()
 
+
+
+
+
+
 title = "Space Dodge"
 width, height = 1700, 900
 
-display = pygame.display.set_mode((width, height))
+
+display = pygame.display.set_mode((width, height), RESIZABLE)
 pygame.display.set_caption(title)
 
 clock = Clock()
+
+
+
+
+
+
+
+
 
 # Surfaces
 blackhole_img = pygame.image.load(
@@ -69,14 +83,16 @@ planets.append([jupiter_img, jupiter])
 
 
 
-# Players
+
+
+
+# Player
 player_img = pygame.image.load(
     os.path.join("assets","player.png")).convert_alpha()
 player = pygame.Rect(width/2, height/2, player_img.get_width(), player_img.get_height())
-
-
-
-
+# PlayerBullet
+bullet_img = pygame.image.load(
+    os.path.join("assets", "bullet.png"))
 
 # Enemy
 enemy_img = pygame.image.load(os.path.join("assets", "enemy.png")).convert_alpha()
@@ -168,9 +184,13 @@ while 1:
         if event.type == KEYDOWN:
             if event.key == K_ESCAPE:
                 pause = True
+            
+            if event.key == K_SPACE:
+                pygame.quit()
+                exit()
 
-
-
+        if event.type == VIDEORESIZE:
+            width, height = pygame.display.Info().current_w, pygame.display.Info().current_h
 
     # If enemies == 0
     if len(enemies) == 0:
