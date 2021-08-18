@@ -93,6 +93,15 @@ player = pygame.Rect(width/2, height/2, player_img.get_width(), player_img.get_h
 # PlayerBullet
 bullet_img = pygame.image.load(
     os.path.join("assets", "bullet.png"))
+bullets = []
+bullet_ready = False
+
+
+
+
+
+
+
 
 # Enemy
 enemy_img = pygame.image.load(os.path.join("assets", "enemy.png")).convert_alpha()
@@ -101,7 +110,13 @@ enemy_speed = 3
 wavelength = 6
 
 
-pause = False
+
+
+
+# Pause
+
+
+
 
 
 
@@ -125,6 +140,9 @@ pause_rect = pygame.Rect(
     pause_render.get_width(),
     pause_render.get_height()
 )
+pause = False
+
+
 
 
 
@@ -144,12 +162,16 @@ while 1:
     
     display.blit(pause_render, (pause_rect.x, pause_rect.y))
 
+
+
     for planet in planets:
         display.blit(planet[0], (planet[1].x, planet[1].y))
 
         if planet[1].colliderect(blackhole):
             planets.remove([planet[0], planet[1]])
         
+
+
 
     for enemy in enemies:
         display.blit(enemy_img, (enemy.x, enemy.y))
@@ -169,8 +191,22 @@ while 1:
     display.blit(player_img, (player.x, player.y))
     
     display.blit(blackhole_img, (blackhole.x, blackhole.y))
-    # blackhole.y += 10
 
+
+
+    for bullet in bullets:
+        display.blit(bullet_img, (bullet.x, bullet.y))
+        bullet.y -= 10
+
+        if bullet.y < 0 + bullet_img.get_height():
+            bullets.remove(bullet)
+        
+        if bullet.y > 0:
+            for enemy in enemies:
+                if bullet.colliderect(enemy):
+                    bullets.remove(bullet)
+                    enemies.remove(enemy)
+        
 
 
 
@@ -186,11 +222,14 @@ while 1:
                 pause = True
             
             if event.key == K_SPACE:
-                pygame.quit()
-                exit()
+                bullet_ready = True
+            
+
 
         if event.type == VIDEORESIZE:
             width, height = pygame.display.Info().current_w, pygame.display.Info().current_h
+
+
 
     # If enemies == 0
     if len(enemies) == 0:
@@ -203,6 +242,22 @@ while 1:
             )
             enemies.append(enemy)
 
+
+
+
+
+
+    # Bullet
+    if bullet_ready:
+        bullet = pygame.Rect(
+            player.x + player_img.get_width()/2 - bullet_img.get_width()/2,
+            player.y,
+            bullet_img.get_width(),
+            bullet_img.get_height()
+        )
+        
+        bullets.append(bullet)
+        bullet_ready = False
 
 
 
