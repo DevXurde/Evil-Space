@@ -150,7 +150,7 @@ pause = False
 # Level, Scores, Lives
 score = 0
 level = 0
-lives = 5
+lives = 10
 
 kills = 0
 
@@ -390,6 +390,24 @@ while 1:
 
     if keys_pressed[K_s] and player.y < height - player_img.get_height() - 10:
         player.y += player_speed
+
+
+    # With keys
+
+    elif keys_pressed[K_LEFT] and player.x > 0:
+        player.x -= player_speed
+
+    elif keys_pressed[K_RIGHT] and player.x < width - player_img.get_height() - 10:
+        player.x += player_speed
+
+    elif keys_pressed[K_UP] and player.y > 0:
+        player.y -= player_speed
+
+    elif keys_pressed[K_DOWN] and player.y < height - player_img.get_height() - 10:
+        player.y += player_speed
+
+
+
 
     # Change POS
     if blackhole.y > height + blackhole_img.get_height():
