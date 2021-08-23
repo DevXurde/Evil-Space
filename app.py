@@ -18,9 +18,7 @@ pygame.font.init()
 
 
 
-
-
-title = "Space Dodge"
+title = "Evil Space"
 width, height = 1700, 900
 
 display = pygame.display.set_mode((width, height))
@@ -283,6 +281,7 @@ while 1:
         (width - kills_render.get_width() - 55 , pause_rect.y + 60 + level_render.get_height() + kills_render.get_height())
     )
 
+    pygame.display.update()
 
 
 
@@ -412,8 +411,6 @@ while 1:
     # Change POS
     if blackhole.y > height + blackhole_img.get_height():
         blackhole.y = -1000
-
-    pygame.display.update()
 
 
 
