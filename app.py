@@ -228,14 +228,16 @@ while run:
 
     if lost:
         run = False
-        from scripts.settings import *
-        enemies.clear()
-
-        player = create_player(player_img)
 
         gameover_result = gameover_screen(score, kills, display)
         if gameover_result:
             lost = False
+
+            from scripts.settings import *
+            enemies.clear()
+            bullets.clear()
+
+            player = create_player(player_img)
 
             run = True
 

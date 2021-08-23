@@ -1,5 +1,4 @@
 import pygame.font
-import os
 
 pygame.font.init()
 
@@ -33,7 +32,7 @@ font = pygame.font.SysFont("ComicSans", 70)
 
 score = 0
 level = 0
-lives = 5
+lives = 15
 
 kills = 0
 
