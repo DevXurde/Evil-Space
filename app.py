@@ -1,4 +1,5 @@
 import pygame
+from pygame import fastevent
 import pygame.display
 import pygame.event
 from pygame.time import Clock
@@ -11,6 +12,10 @@ import os
 import random
 
 from pygame.locals import *
+from scripts.settings import *
+from scripts.pause import pause_game
+from scripts.game_over import gameover_screen
+from scripts.menu import menu_screen
 
 pygame.init()
 pygame.font.init()
@@ -18,37 +23,13 @@ pygame.font.init()
 
 
 
-title = "Evil Space"
-width, height = 1700, 900
-
 display = pygame.display.set_mode((width, height))
 pygame.display.set_caption(title)
 
 clock = Clock()
-FPS = 60
 
 
 
-
-
-
-
-
-
-# Surfaces
-blackhole_img = pygame.image.load(
-    os.path.join("assets" ,"blackhole.png"))
-blackhole = pygame.Rect(width/2 - blackhole_img.get_width()/2, -1000, blackhole_img.get_width(),blackhole_img.get_height())
-
-
-
-
-
-
-
-
-# Planets
-planets = []
 
 # Earth
 earth_img = pygame.image.load(
@@ -84,21 +65,14 @@ planets.append([jupiter_img, jupiter])
 
 
 
-
-
-
-
 # Player
 player_img = pygame.image.load(
     os.path.join("assets","player.png")).convert_alpha()
-player = pygame.Rect(width/2, height/2, player_img.get_width(), player_img.get_height())
-player_speed = 10
+# player = pygame.Rect(width/2, height/2, player_img.get_width(), player_img.get_height())
+player = create_player(player_img)
 # PlayerBullet
 bullet_img = pygame.image.load(
     os.path.join("assets", "bullet.png"))
-bullets = []
-bullet_ready = False
-
 
 
 
@@ -106,24 +80,6 @@ bullet_ready = False
 
 # Enemy
 enemy_img = pygame.image.load(os.path.join("assets", "enemy.png")).convert_alpha()
-enemies = []
-enemy_speed = 3
-wavelength = 6
-
-
-
-
-
-
-
-
-# Fonts
-font = pygame.font.SysFont("ComicSans", 70)
-
-
-
-
-
 
 
 
@@ -135,69 +91,21 @@ pause_rect = pygame.Rect(
     pause_render.get_width(),
     pause_render.get_height()
 )
-pause = False
 
 
-
-
-
-
-
-
-
-# Level, Scores, Lives
-score = 0
-level = 0
-lives = 10
-
-kills = 0
-
-
-
-
-
-
-
-
-
-
-# Game Over
-game_over = False
-
-
-
-
-
-
-
-# Read and Write highscore
-class Highscore:
-    def __init__(self) -> None:
-        pass
-
-    def get_highscore(self):
-        with open("highscore.txt", "r") as highscore:
-            highscore = highscore.read()
-
-        return highscore
-
-    def write_highscore(self, score):
-        with open("highscore.txt", "w") as highscore:
-            highscore.write(score)
-
-        return True
 
 
 highscore = Highscore()
-highscore_text = "Highscore"
 
 
+menu_result = menu_screen(display)
+if menu_result:
+    lost = False
+    run = True
+else:
+    run = False
 
-
-
-
-
-while 1:
+while run:
 
     # Some Vars
     lives_render = font.render(f"Lives : {lives}", True, (255,255,255))
@@ -214,15 +122,8 @@ while 1:
     # Draw
     display.fill((50,50,50))
 
-
     for planet in planets:
         display.blit(planet[0], (planet[1].x, planet[1].y))
-
-        if planet[1].colliderect(blackhole):
-            planets.remove([planet[0], planet[1]])
-        
-
-
 
     for enemy in enemies:
         display.blit(enemy_img, (enemy.x, enemy.y))
@@ -238,10 +139,6 @@ while 1:
             if remove_enemy == None:
                 lives -= 1
                 kills += 1
-
-        if enemy.y > 0:
-            if enemy.colliderect(blackhole):
-                enemies.remove(enemy)
 
     display.blit(player_img, (player.x, player.y))
 
@@ -264,9 +161,6 @@ while 1:
                     if enemy_remove == None:
                         kills += 1
 
-
-
-    display.blit(blackhole_img, (blackhole.x, blackhole.y))
 
     display.blit(pause_render, (pause_rect.x, pause_rect.y))
     display.blit(lives_render, (pause_rect.x, pause_rect.y + 30 + lives_render.get_height()))
@@ -329,7 +223,21 @@ while 1:
     # LevelsETC
     score += 1/FPS
     if lives <= 0:
-        game_over = True
+        lost = True
+        
+
+    if lost:
+        run = False
+        from scripts.settings import *
+        enemies.clear()
+
+        player = create_player(player_img)
+
+        gameover_result = gameover_screen(score, kills, display)
+        if gameover_result:
+            lost = False
+
+            run = True
 
 
 
@@ -408,144 +316,18 @@ while 1:
 
 
 
-    # Change POS
-    if blackhole.y > height + blackhole_img.get_height():
-        blackhole.y = -1000
-
-
-
-
 
 
     # Pause
     while pause:
-        pause_display = pygame.display.set_mode((width, height))
-        pause_display.fill((50,50,50))
+        pause_game_result = pause_game()
+        if pause_game_result == "resume":
+            pause = False
 
-        font = pygame.font.SysFont("ComicSans", 100)
-        
-        resume_render = font.render("Resume", True, (255,255,255))
-        resume = pygame.Rect(
-            width/2 - resume_render.get_width()/2,
-            height/2 - resume_render.get_height()/2 - 75,
-            resume_render.get_width(),
-            resume_render.get_height()
-        )
-
-        menu_render = font.render("Menu", True, (255,255,255))
-        menu_rect = pygame.Rect(
-            width/2 - menu_render.get_width()/2,
-            height/2 - menu_render.get_height()/2 + 75,
-            menu_render.get_width(),
-            menu_render.get_height()
-        )
-
-
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                exit()
-
-            # if event.type == KEYDOWN:
-            #     if event.key == K_SPACE:
-            #         pause = False
-
-        # Draw
-        pause_display.blit(resume_render, (resume.x, resume.y))
-        pause_display.blit(menu_render, (menu_rect.x, menu_rect.y))
-
-        
-        # mouse pos
-        mouse_pos = pygame.mouse.get_pos()
-        mouse_pressed = list(pygame.mouse.get_pressed())
-            
-
-        if resume.collidepoint(mouse_pos):
-
-            if mouse_pressed[0] == True:
-                pause = False
-        
-
-        if menu_rect.collidepoint(mouse_pos):
-
-            if mouse_pressed[0] == True:
-                print("Menu")
-
-        pygame.display.update()
-
-
-
-
-
-
-
-
-    while game_over:
-        over_display = pygame.display.set_mode((width, height))
-        over_display.fill((50,50,50))
-
-        game_over_font = pygame.font.SysFont("ComicSans", 130)
-        font = pygame.font.SysFont("ComicSans", 100)
-
-        game_over_render = game_over_font.render("Game Over", True, (255,255,255))
-        
-
-        menu_render = font.render("Space To Menu", True, (255,255,255))
-        menu_rect = pygame.Rect(
-            width/2 - menu_render.get_width()/2,
-            height/2 - menu_render.get_height()/2 - 80 ,
-            menu_render.get_width(),
-            menu_render.get_height()
-        )
-        score_render = font.render(f"Score : {int(score)}", True, (255,255,255))
-        kills_render = font.render(f"Kills : {kills}", True, (255,255,255))
-        highscore_render = font.render(f"{highscore_text} : {highscore.get_highscore()}", True, (255,255,255))
-
-
-
-
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                exit()
-
-            if event.type == KEYDOWN:
-                if event.key == K_SPACE:
-                    print("Menu")
-
-
-        # Draw
-        over_display.blit(game_over_render, (width/2 - game_over_render.get_width()/2, 50))
-        over_display.blit(menu_render, (menu_rect.x, menu_rect.y))
-        
-        over_display.blit(
-            score_render,
-            (
-                width/2 - score_render.get_width()/2,
-                height/2 - score_render.get_height()/2 + 40
-            )
-        )
-        
-        over_display.blit(
-            kills_render,
-            (
-                width/2 - kills_render.get_width()/2,
-                height/2 - kills_render.get_height()/2 + 60 + score_render.get_height()
-            )
-        )
-
-        over_display.blit(
-            highscore_render,
-            (
-                width/2 - highscore_render.get_width()/2,
-                height/2 - highscore_render.get_height()/2 + 140 + kills_render.get_height()
-            )
-        )
-
-
-
-
-        pygame.display.update()
-
+        if pause_game_result == "menu":
+            pause = False
+            menu_result = menu_screen()
+            if menu_result:
+                run = True
 
 pygame.quit()
