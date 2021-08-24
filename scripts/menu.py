@@ -46,5 +46,12 @@ def menu_screen(display):
                 if event.key == K_SPACE:
                     return True
 
+        mouse_pos = pygame.mouse.get_pos()
+        mouse_pressed = list(pygame.mouse.get_pressed())
+
+        if play_rect.collidepoint(mouse_pos):
+            if mouse_pressed[0] == True:
+                return True
+
         pygame.display.update()
 

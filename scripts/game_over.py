@@ -68,6 +68,12 @@ def gameover(score, kills, display):
             )
         )
 
+        mouse_pos = pygame.mouse.get_pos()
+        mouse_pressed = pygame.mouse.get_pressed()
+
+        if menu_rect.collidepoint(mouse_pos):
+            if mouse_pressed[0] == True:
+                return "menu"
 
         pygame.display.update()
 

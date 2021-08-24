@@ -1,5 +1,5 @@
 import pygame
-from pygame import fastevent
+import time
 import pygame.display
 import pygame.event
 from pygame.time import Clock
@@ -68,7 +68,6 @@ planets.append([jupiter_img, jupiter])
 # Player
 player_img = pygame.image.load(
     os.path.join("assets","player.png")).convert_alpha()
-# player = pygame.Rect(width/2, height/2, player_img.get_width(), player_img.get_height())
 player = create_player(player_img)
 # PlayerBullet
 bullet_img = pygame.image.load(
@@ -227,6 +226,8 @@ while run:
         
 
     if lost:
+
+        time.sleep(.5)
         run = False
 
         gameover_result = gameover_screen(score, kills, display)
@@ -328,8 +329,14 @@ while run:
 
         if pause_game_result == "menu":
             pause = False
-            menu_result = menu_screen()
+            menu_result = menu_screen(display)
             if menu_result:
+                from scripts.settings import *
+                enemies.clear()
+                bullets.clear()
+
+                player = create_player(player_img)
+
                 run = True
 
 pygame.quit()
