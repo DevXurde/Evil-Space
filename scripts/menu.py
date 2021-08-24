@@ -1,57 +1,72 @@
-from .settings import *
+from .data import Highscore
 from pygame.locals import *
 import pygame
 import pygame.display
-import sys
-from .settings import run
 
 highscore = Highscore()
 
+class Menu():
+    def __init__(self, width, height, title, game_class, planets):
+        self.menu = True
+        self.game = game_class()
+        
+        self.width = width
+        self.height = height
 
-def menu_screen(display):
-    while menu:
-        menu_display = display
-        menu_display.fill((50, 50, 50))
+        self.title = title
 
-        title_font = pygame.font.SysFont("ComicSans", 200)
-        font = pygame.font.SysFont("ComicSans", 120)
+        self.planets = planets
 
-        play_render = font.render("Play", True, (255, 255, 255))
-        play_rect = pygame.Rect(
-            width/2 - play_render.get_width()/2,
-            height/2 - play_render.get_height()/2 - 50,
-            play_render.get_width(),
-            play_render.get_height()
-        )
-        title_render = title_font.render(title, True, (255, 255, 255))
-        highscore_render = font.render(
-            f"Highscore : {highscore.get_highscore()}", True, (255, 255, 255))
+        self.title_font = pygame.font.SysFont("ComicSans", 200)
+        self.font = pygame.font.SysFont("ComicSans", 120)
 
-        # Draw
-        for planet in planets:
-            menu_display.blit(planet[0], (planet[1].x, planet[1].y))
+        self.play_render = self.font.render("Play", True, (255, 255, 255))
+        self.play_rect = pygame.Rect(
+                self.width/2 - self.play_render.get_width()/2,
+                self.height/2 - self.play_render.get_height()/2 - 50,
+                self.play_render.get_width(),
+                self.play_render.get_height()
+            )
 
-        menu_display.blit(play_render, (play_rect.x, play_rect.y))
-        menu_display.blit(
-            title_render, (width/2 - title_render.get_width()/2, 20))
-        menu_display.blit(highscore_render, (width/2 - highscore_render.get_width() /
-                            2, height/2-highscore_render.get_height()/2 + 50))
 
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                exit()
+    def start(self, display):
 
-            if event.type == KEYDOWN:
-                if event.key == K_SPACE:
-                    return True
+        while self.menu:
+            display.fill((50, 50, 50))
 
-        mouse_pos = pygame.mouse.get_pos()
-        mouse_pressed = list(pygame.mouse.get_pressed())
 
-        if play_rect.collidepoint(mouse_pos):
-            if mouse_pressed[0] == True:
-                return True
+            title_render = self.title_font.render(self.title, True, (255, 255, 255))
+            highscore_render = self.font.render(
+                f"Highscore : {highscore.get_highscore()}", True, (255, 255, 255))
 
-        pygame.display.update()
+            # Draw
+            for planet in self.planets:
+                display.blit(planet[0], (planet[1].x, planet[1].y))
+
+            display.blit(self.play_render, (self.play_rect.x, self.play_rect.y))
+            
+            display.blit(
+                title_render, (self.width/2 - title_render.get_width()/2, 20))
+            display.blit(highscore_render, (self.width/2 - highscore_render.get_width() /
+                                2, self.height/2-highscore_render.get_height()/2 + 50))
+
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    exit()
+
+                if event.type == KEYDOWN:
+                    if event.key == K_SPACE:
+                        self.menu = False
+                        self.game.play()
+
+            mouse_pos = pygame.mouse.get_pos()  
+            mouse_pressed = list(pygame.mouse.get_pressed())
+
+            if self.play_rect.collidepoint(mouse_pos):
+                if mouse_pressed[0] == True:
+                    self.menu = False
+                    self.game.play()
+
+            pygame.display.update()
 
