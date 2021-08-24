@@ -1,7 +1,7 @@
 # Evil-Space
 A SpaceShooter type game created with better graphics and gameplay.
 
-# Downloading
+## Installing
 Clone this repository
 ```bash
 git clone https://github.com/DevXurde/Evil-Space.git
