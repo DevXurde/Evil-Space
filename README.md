@@ -11,7 +11,7 @@ Change directory to Evil-Space
 cd Evil-Space
 ```
 Install the requirements
-```bash
+```bashDownloading
 pip3 install -r requirements.txt
 ```
 Run the game
