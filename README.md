@@ -4,7 +4,7 @@ A SpaceShooter type game created with better graphics and gameplay.
 ## Installing
 Clone this repository
 ```bash
-git clone https://github.com/DevXurde/Evil-Space.git
+git clone https://github.com/ZayedMalick/Evil-Space.git
 ```
 Change directory to Evil-Space
 ```bash
